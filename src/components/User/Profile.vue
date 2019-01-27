@@ -1,5 +1,7 @@
 <template>
-    $END$
+  <div>
+    <p>Profile page</p>
+  </div>
 </template>
 
 <script>
