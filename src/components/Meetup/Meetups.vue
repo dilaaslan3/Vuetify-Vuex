@@ -6,10 +6,10 @@
         <v-container fluid>
           <v-layout row wrap>
             <v-flex xs5 sm4 md3>
-              <v-card-media
+              <v-img
                 :src="meetup.imgUrl"
                 height="150px"
-              ></v-card-media>
+              ></v-img>
             </v-flex>
             <v-flex xs7 sm8 md9>
               <v-card-title primary-title>

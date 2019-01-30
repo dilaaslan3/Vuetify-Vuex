@@ -23,10 +23,24 @@ export default new Vuex.Store({
       }
     ]
 
-  },
-  mutations: {
-  },
-  actions: {
+  }, // statedeki verilere direk olarak müdahele edemeyiz bu yüzden mutationsları kullanırız
+  mutations: { //  createMeetup isimli bir fonk. tanımlıyoruz  actionsta da aynı isimli fonk tanımlayacağım bu fonksiyon state ve payload isimli iki parametre alıyor. state parametresi statedeki verilere erişebilmek için. payload ise actionstan gelecek ve yeni meetupın verilerini tutacak. burada createMeetup fonk. amacı yeni oluşturulan meetupı meetup listesine ekleyebilmek
+    createMeetup (state, payload) {
+      state.loadedMeetups.push(payload)
+    }
+  }, // actionsın mutationstan farkı state i değişirmek yerine state e commit yapar yani yeni veriler ekler bunu da mutations üzerinden sağlar
+  actions: { // commit default bir parametredir ikinci prmtre olan payload ise this.$store.dispatch('createMeetup', meetupData) daki meetupData payloada geliyor
+    createMeetup ({ commit }, payload) {
+      const meetup = {
+        title: payload.title,
+        location: payload.location,
+        imageUrl: payload.imageUrl,
+        description: payload.description,
+        date: payload.date,
+        id: 'dfghjklş'
+      } // const meetup hiç oluşturmadan direk payloadu mutationsa commit ('createMeetup', payload) yaparak da gönderebilirdim
+      commit('createMeetup', meetup) // ancak bu durumda payloaddan habersiz olacaktım bu yüzden meetup değişkeni oluşturarak gelen meetupData yani payload değişkenini actionsta da elimde tutmuş oluyorum
+    }
   },
   getters: { // statede tanımladığımız dataları getter da kullanıyoruz ,fonksiyon oluşturup get ederek çalıştıracağım
     loadedMeetups (state) { // state i parametre olarak aldım, şimdi de fonk oluşturuyorum
