@@ -35,7 +35,7 @@
               <v-text-field
                 name="imageUrl"
                 label="Image Url"
-                id="image-url"
+                id="imageUrl"
                 v-model="imageUrl"
                 required
               ></v-text-field>
@@ -60,6 +60,23 @@
           </v-layout>
           <v-layout row>
             <v-flex xs12 sm6 offset-sm3>
+              <p>Choose Date&Time</p>
+            </v-flex>
+          </v-layout>
+          <v-layout row class="mb-3">
+            <v-flex xs12 sm6 offset-sm3>
+              <v-date-picker v-model="date"></v-date-picker>
+              <p>{{ date }}</p>
+            </v-flex>
+          </v-layout>
+          <v-layout row>
+            <v-flex xs12 sm6 offset-sm3>
+              <v-time-picker v-model="time"></v-time-picker>
+              <p>{{ time }}</p>
+            </v-flex>
+          </v-layout>
+          <v-layout row>
+            <v-flex xs12 sm6 offset-sm3>
               <v-btn class="primary" :disabled="!formIsValid" type="submit">Create Meetup</v-btn>
             </v-flex>
           </v-layout>
@@ -76,7 +93,9 @@ export default {
       title: '',
       location: '',
       imageUrl: '',
-      description: ''
+      description: '',
+      date: new Date().toISOString().substr(0, 10),
+      time: new Date()
     }
   },
   computed: {
@@ -89,7 +108,7 @@ export default {
   },
   methods: {
     onCreateMeetup () {
-      if (!this.formIsValid) { // ??
+      if (!this.formIsValid) {
         return
       }
       const meetupData = {
@@ -97,7 +116,8 @@ export default {
         location: this.location,
         imageUrl: this.imageUrl,
         description: this.description,
-        date: new Date()
+        date: this.date,
+        time: this.time
       }
       this.$store.dispatch('createMeetup', meetupData) // actionstaki createMeetup ın içerisine meetupData yı yolluyor (ikinci parametre payloada gidecek)
       this.$router.push('/meetups') // navigate to meetups page

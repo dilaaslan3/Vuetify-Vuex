@@ -9,17 +9,26 @@ export default new Vuex.Store({
       { imgUrl: 'http://emittistanbul.com/ITE/media/ITEGroup/Content%20Page%20Heroes/visit-istanbul-640x217.jpg',
         id: '1',
         title: 'Meetup in Istanbul',
-        date: '2019-01-26'
+        date: '2019-01-26',
+        time: '19.30',
+        location: 'Istanbul',
+        description: 'Awesome Meetup in Istanbul'
       },
       { imgUrl: 'https://i.sozcu.com.tr/wp-content/uploads/2018/04/iecrop/adanaportakalcicegifest3_16_9_1523012575-880x495.jpg',
         id: '2',
         title: 'Meetup in Adana',
-        date: '2019-01-28'
+        date: '2019-01-28',
+        location: 'Adana',
+        time: '19.30',
+        description: 'Awesome Meetup in Adana'
       },
       { imgUrl: 'http://i.hurimg.com/i/hurriyet/75/750x422/59311ef3c03c0e3efce6f4f4.jpg',
         id: '3',
         title: 'Meetup in Izmir',
-        date: '2019-01-30'
+        date: '2019-01-30',
+        location: 'Izmir',
+        time: '19.30',
+        description: 'Awesome Meetup in Izmir'
       }
     ]
 
@@ -34,9 +43,10 @@ export default new Vuex.Store({
       const meetup = {
         title: payload.title,
         location: payload.location,
-        imageUrl: payload.imageUrl,
+        imgUrl: payload.imageUrl,
         description: payload.description,
         date: payload.date,
+        time: payload.time,
         id: 'dfghjklş'
       } // const meetup hiç oluşturmadan direk payloadu mutationsa commit ('createMeetup', payload) yaparak da gönderebilirdim
       commit('createMeetup', meetup) // ancak bu durumda payloaddan habersiz olacaktım bu yüzden meetup değişkeni oluşturarak gelen meetupData yani payload değişkenini actionsta da elimde tutmuş oluyorum
