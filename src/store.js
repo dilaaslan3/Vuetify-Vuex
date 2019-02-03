@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import * as firebase from 'firebase'
 
 Vue.use(Vuex)
 
@@ -30,12 +31,19 @@ export default new Vuex.Store({
         time: '19.30',
         description: 'Awesome Meetup in Izmir'
       }
-    ]
+    ],
+    user: {
+      id: 'sadhajhda',
+      registeredMeetups: ['sdhfjshf']
+    }
 
   }, // statedeki verilere direk olarak müdahele edemeyiz bu yüzden mutationsları kullanırız
   mutations: { //  createMeetup isimli bir fonk. tanımlıyoruz  actionsta da aynı isimli fonk tanımlayacağım bu fonksiyon state ve payload isimli iki parametre alıyor. state parametresi statedeki verilere erişebilmek için. payload ise actionstan gelecek ve yeni meetupın verilerini tutacak. burada createMeetup fonk. amacı yeni oluşturulan meetupı meetup listesine ekleyebilmek
     createMeetup (state, payload) {
       state.loadedMeetups.push(payload)
+    },
+    setUser (state, payload) {
+      state.user.push(payload) // state.user = payload
     }
   }, // actionsın mutationstan farkı state i değişirmek yerine state e commit yapar yani yeni veriler ekler bunu da mutations üzerinden sağlar
   actions: { // commit default bir parametredir ikinci prmtre olan payload ise this.$store.dispatch('createMeetup', meetupData) daki meetupData payloada geliyor
@@ -50,6 +58,22 @@ export default new Vuex.Store({
         id: 'dfghjklş'
       } // const meetup hiç oluşturmadan direk payloadu mutationsa commit ('createMeetup', payload) yaparak da gönderebilirdim
       commit('createMeetup', meetup) // ancak bu durumda payloaddan habersiz olacaktım bu yüzden meetup değişkeni oluşturarak gelen meetupData yani payload değişkenini actionsta da elimde tutmuş oluyorum
+    }, // yeni bi user kaydolduğundaki olcak olan olaylar state e veri ekleyecek bi durum old. dolayı signUserUp fonksiyonunu actionsa yazıyorum
+    signUserUp ({ commit }, payload) { // bu payload Signup compenentindeki onSignup methodunun içindeki userInfo dan gelir
+      firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password) // firebase Authentication bağladım
+        .then(
+          user => { // bağladıktan sonra statede tuttuğum formatta userların bilgileri gibi bide newUser için giriyorum
+            const newUser = {
+              id: user.uid,
+              registeredMeetups: [] // yeni userın kayıtlı olduğu meetup olmayacağı için boş array
+            }
+            commit('setUser', newUser) // mutationsdaki setUserın payloaduna newUser ı yolluyorum
+          }
+        ).catch(
+          error => {
+            console.log(error) // hata olursa hata mesajı döndüm
+          }
+        )
     }
   },
   getters: { // statede tanımladığımız dataları getter da kullanıyoruz ,fonksiyon oluşturup get ederek çalıştıracağım

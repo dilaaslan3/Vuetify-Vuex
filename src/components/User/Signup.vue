@@ -71,12 +71,18 @@ export default {
     }
   },
   methods: {
-    onSignUp () {
+    onSignUp () { /*
       console.log({
         email: this.email,
         password: this.password,
         confirmPassword: this.confirmPassword
       })
+    } */
+      const userInfo = {
+        email: this.email,
+        password: this.password
+      }
+      this.$store.dispatch('signUserUp', userInfo)
     }
   }
 }
