@@ -68,6 +68,16 @@ export default {
   computed: {
     comparePasswords () {
       return this.password !== this.confirmPassword ? 'Passwords do not match' : true
+    },
+    user () {
+      return this.$store.getters.getUser // gettersdaki getUser ı buraya Signup componentinin içerisine çağırdım
+    } // return edilen value watchdaki user fonksiyonuna parametre olarak gönderilir
+  },
+  watch: { // computeddaki userı izliyorum , dolaylı olarak statedeki userı izlemiş oluyorum
+    user (value) { // kayıt işleminde herhangi bir sorun yoksa uygulama anasayfasına kullanıcıyı route ettim
+      if (value !== null && value !== undefined) {
+        this.$router.push('/')
+      }
     }
   },
   methods: {

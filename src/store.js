@@ -32,10 +32,13 @@ export default new Vuex.Store({
         description: 'Awesome Meetup in Izmir'
       }
     ],
-    user: {
+    user: null, // en başta hiçbir user olmayacağı için user ı null yaptım
+    /* {
       id: 'sadhajhda',
       registeredMeetups: ['sdhfjshf']
-    }
+    } */
+    loading: false, // sonradan eklenecek
+    error: null // sonradan eklenecek
 
   }, // statedeki verilere direk olarak müdahele edemeyiz bu yüzden mutationsları kullanırız
   mutations: { //  createMeetup isimli bir fonk. tanımlıyoruz  actionsta da aynı isimli fonk tanımlayacağım bu fonksiyon state ve payload isimli iki parametre alıyor. state parametresi statedeki verilere erişebilmek için. payload ise actionstan gelecek ve yeni meetupın verilerini tutacak. burada createMeetup fonk. amacı yeni oluşturulan meetupı meetup listesine ekleyebilmek
@@ -43,7 +46,7 @@ export default new Vuex.Store({
       state.loadedMeetups.push(payload)
     },
     setUser (state, payload) {
-      state.user.push(payload) // state.user = payload
+      state.user = payload
     }
   }, // actionsın mutationstan farkı state i değişirmek yerine state e commit yapar yani yeni veriler ekler bunu da mutations üzerinden sağlar
   actions: { // commit default bir parametredir ikinci prmtre olan payload ise this.$store.dispatch('createMeetup', meetupData) daki meetupData payloada geliyor
@@ -54,10 +57,21 @@ export default new Vuex.Store({
         imgUrl: payload.imageUrl,
         description: payload.description,
         date: payload.date,
-        time: payload.time,
-        id: 'dfghjklş'
-      } // const meetup hiç oluşturmadan direk payloadu mutationsa commit ('createMeetup', payload) yaparak da gönderebilirdim
-      commit('createMeetup', meetup) // ancak bu durumda payloaddan habersiz olacaktım bu yüzden meetup değişkeni oluşturarak gelen meetupData yani payload değişkenini actionsta da elimde tutmuş oluyorum
+        time: payload.time
+      } // üstte tanımladığım meetup objectiyle post isteği attım (push ile)
+      firebase.database().ref('meetups').push(meetup) // meetups pathine yolluyorum çünkü bir meetup create edildiğinde direk olarak meetups page açılsın istiorum
+        .then(data => {
+          const key = data.key
+          commit('createMeetup', { // istek başarılı olduğunda commit etsin diye post isteği attığım meetupı mutationsdaki createMeetup a gönderiyorum
+            ...meetup, // meetup objesine meetupın id si olacak firebasein otomatik olarak oluşturduğu key i
+            id: key // spread operator yardımı ile ekliyorum. Böylece view meetupa tıkladığımda meetupın idsi olduğu için görüntüleyebileceğim
+          })
+          console.log(data)
+        }).catch(
+          error => {
+            console.log(error)
+          }
+        )
     }, // yeni bi user kaydolduğundaki olcak olan olaylar state e veri ekleyecek bi durum old. dolayı signUserUp fonksiyonunu actionsa yazıyorum
     signUserUp ({ commit }, payload) { // bu payload Signup compenentindeki onSignup methodunun içindeki userInfo dan gelir
       firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password) // firebase Authentication bağladım
@@ -72,6 +86,22 @@ export default new Vuex.Store({
         ).catch(
           error => {
             console.log(error) // hata olursa hata mesajı döndüm
+          }
+        )
+    },
+    signUserIn ({ commit }, payload) {
+      firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+        .then(
+          user => {
+            const newUser = {
+              id: user.uid,
+              registeredMeetups: [] // yeni userın kayıtlı olduğu meetup olmayacağı için boş array
+            }
+            commit('setUser', newUser)
+          }
+        ).catch(
+          error => {
+            console.log(error)
           }
         )
     }
@@ -99,6 +129,9 @@ export default new Vuex.Store({
           return herhangibirMeetup.id === meetupId
         })
       }
+    },
+    getUser (state) { // state deki user verilerini get ederek
+      return state.user
     }
   }
 })

@@ -38,17 +38,28 @@
 <script>
 
 export default {
-  components: {},
   data () {
     return {
-      drawer: false,
-      menuItems: [
-        { icon: 'supervisor_account', title: 'View Meetups', link: '/meetups' },
-        { icon: 'room', title: 'Organize Meetup', link: '/meetup/create' },
-        { icon: 'person', title: 'Profile', link: '/profile' },
+      drawer: false
+    }
+  },
+  computed: { // computedun içinde yazdığım her fonksiyon bir value return etmek zorunda
+    menuItems () { // userın authenticated durumuna göre kullanıcıya toolbarda gerekli olan menu ıtemlarını gösterir
+      let menuItems = [
         { icon: 'face', title: 'Sign Up', link: '/signup' },
         { icon: 'lock_open', title: 'Sign In', link: 'signin' }
       ]
+      if (this.userIsAuthenticated) {
+        menuItems = [
+          { icon: 'supervisor_account', title: 'View Meetups', link: '/meetups' },
+          { icon: 'room', title: 'Organize Meetup', link: '/meetup/create' },
+          { icon: 'person', title: 'Profile', link: '/profile' }
+        ]
+      }
+      return menuItems
+    },
+    userIsAuthenticated () { // userın authenticated durumunu store gettersdaki getUser fonksiyonundaki verilere bakarak kotrol eder
+      return this.$store.getters.getUser !== null && this.$store.getters.getUser !== undefined
     }
   }
 }
